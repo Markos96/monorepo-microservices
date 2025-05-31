@@ -1,0 +1,20 @@
+enum Category {
+    TOY,
+    HOME,
+    KITCHEN,
+    FOOD
+}
+
+type ProductDTO {
+    id: ID!
+    name: String!
+    description: String
+    price: Float
+    category: Category!
+}
+
+
+type Query {
+    getProducts : [ProductDTO]
+    getProductById(id: Int!): ProductDTO
+}

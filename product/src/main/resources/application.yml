@@ -1,10 +1,10 @@
 spring:
   application:
-    name: api-client-service
+    name: api-product-service
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/client
+    url: jdbc:postgresql://localhost:5432/products
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
@@ -22,8 +22,9 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
   instance:
-    instance-id: ${spring.application.name}:${random.value}
+    hostname: other.server.local
     prefer-ip-address: false
+    instance-id: ${spring.application.name}:${random.value}
 
 server:
-  port: 0
+  port: 8082
