@@ -1,0 +1,6 @@
+rootProject.name = 'monorepo-microservices'
+
+include 'client'
+include 'product'
+include 'eureka'
+include 'order'
