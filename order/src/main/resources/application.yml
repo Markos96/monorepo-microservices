@@ -26,5 +26,5 @@ eureka:
     prefer-ip-address: false
 
 server:
-  port: 0
+  port: 9000
 
