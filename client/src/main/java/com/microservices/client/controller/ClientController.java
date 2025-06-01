@@ -4,7 +4,6 @@ import com.microservices.client.model.dto.ClientDTO;
 import com.microservices.client.service.ClientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
