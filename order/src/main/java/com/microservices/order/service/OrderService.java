@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OrderService {
@@ -34,7 +35,9 @@ public class OrderService {
 
         ClientDTO clientDTOS = feignClientRequest.getClientById(order.getCustomerId());
 
-        //TODO Implementar el save del client en caso que no exista el que viene en el metodo
+        if(Objects.isNull(clientDTOS)) {
+            throw new RuntimeException(String.format("Client with code %d not found",  order.getCustomerId()));
+        }
 
         List<ProductDTO> productList = webClientProduct.getProducts();
 
