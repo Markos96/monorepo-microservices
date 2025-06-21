@@ -25,4 +25,16 @@ public class ClientController {
     public ResponseEntity<ClientDTO> getClientById(@PathVariable("id") int id) {
         return ResponseEntity.ok().body(this.clientService.getClientById(id));
     }
+
+    @PostMapping
+    public ResponseEntity<ClientDTO> saveClient(@RequestBody ClientDTO clientDTO) {
+        return ResponseEntity.ok().body(this.clientService.saveClient(clientDTO));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteClientById(@PathVariable("id") int id) {
+        this.clientService.deleteClientById(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

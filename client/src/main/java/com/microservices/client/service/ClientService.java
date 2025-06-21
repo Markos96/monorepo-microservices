@@ -31,4 +31,18 @@ public class ClientService {
                 .map(client -> clientMapper.toDTO(client))
                 .orElse(null);
     }
+
+    public ClientDTO saveClient(ClientDTO clientDTO) {
+        return this.clientMapper.toDTO(this.clientRepository.save(this.clientMapper.toEntity(clientDTO)));
+    }
+
+    public void deleteClientById(int id) {
+        boolean isExist = this.clientRepository.existsById(id);
+
+        if (isExist) {
+            this.clientRepository.deleteById(id);
+        } else {
+            throw new RuntimeException(String.format("%s: %d", "No se puede eliminar el cliente con id " , id));
+        }
+    }
 }
