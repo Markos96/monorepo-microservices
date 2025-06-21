@@ -5,16 +5,28 @@ enum Category {
     FOOD
 }
 
-type ProductDTO {
-    id: ID!
+input ProductRequestDTO {
     name: String!
     description: String
     price: Float
     category: Category!
 }
 
+type ProductDTO {
+    id: ID!
+    name: String!
+    description: String
+    price: Float
+    category: Category
+}
+
 
 type Query {
     getProducts : [ProductDTO]
     getProductById(id: Int!): ProductDTO
+}
+
+type Mutation {
+    addProduct(newProduct : ProductRequestDTO) : ProductDTO
+    deleteProduct(id : Int) : Boolean
 }

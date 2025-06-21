@@ -2,6 +2,7 @@ package com.microservices.product.service;
 
 import com.microservices.product.mapper.ProductMapper;
 import com.microservices.product.model.dto.ProductDTO;
+import com.microservices.product.model.dto.ProductRequestDTO;
 import com.microservices.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -36,5 +37,18 @@ public class ProductService {
                 .stream()
                 .map(product -> productMapper.toDTO(product))
                 .toList();
+    }
+
+    public ProductDTO saveProduct(ProductRequestDTO newProduct) {
+        return productMapper.toDTO(productRepository.save(productMapper.toEntity(newProduct)));
+    }
+
+    public Boolean deleteProductById(Integer id) {
+        if(productRepository.existsById(id)) {
+            productRepository.deleteById(id);
+            return true;
+        }else {
+            return false;
+        }
     }
 }
