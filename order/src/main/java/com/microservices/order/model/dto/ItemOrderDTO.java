@@ -1,5 +1,6 @@
 package com.microservices.order.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.microservices.order.model.domain.Order;
 
 public class ItemOrderDTO {
@@ -12,7 +13,8 @@ public class ItemOrderDTO {
 
     private Double unitPrice;
 
-    private Order order;
+    @JsonIgnore
+    private OrderDTO orderDTO;
 
     public Integer getId() {
         return id;
@@ -46,11 +48,11 @@ public class ItemOrderDTO {
         this.unitPrice = unitPrice;
     }
 
-    public Order getOrder() {
-        return order;
+    public OrderDTO getOrderDTO() {
+        return orderDTO;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderDTO(OrderDTO orderDTO) {
+        this.orderDTO = orderDTO;
     }
 }

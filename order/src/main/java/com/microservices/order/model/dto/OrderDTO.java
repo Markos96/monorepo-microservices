@@ -1,41 +1,19 @@
-package com.microservices.order.model.domain;
+package com.microservices.order.model.dto;
 
+import com.microservices.order.model.domain.OrderItem;
 import com.microservices.order.type.PaymentMethod;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "orders")
-public class Order {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class OrderDTO {
     private Integer customerId;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItem;
-
-    private Integer quantity;
-
+    private Integer orderId;
     private LocalDateTime orderDate;
-
-    @Enumerated(EnumType.STRING)
+    private List<ItemOrderDTO> orderItem;
+    private Integer quantity;
     private PaymentMethod paymentMethod;
-
     private Double total;
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getCustomerId() {
         return customerId;
@@ -45,20 +23,12 @@ public class Order {
         this.customerId = customerId;
     }
 
-    public List<OrderItem> getOrderItem() {
-        return orderItem;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setOrderItem(List<OrderItem> orderItem) {
-        this.orderItem = orderItem;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
     public LocalDateTime getOrderDate() {
@@ -67,6 +37,14 @@ public class Order {
 
     public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
+    }
+
+    public List<ItemOrderDTO> getOrderItem() {
+        return orderItem;
+    }
+
+    public void setOrderItem(List<ItemOrderDTO> orderItem) {
+        this.orderItem = orderItem;
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -83,5 +61,13 @@ public class Order {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

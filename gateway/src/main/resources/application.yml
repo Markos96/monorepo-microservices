@@ -18,6 +18,10 @@ spring:
               uri: lb://api-client-service
               predicates:
                 - Path=/client/**
+            - id: order-service
+              uri: lb://api-order-service
+              predicates:
+                - Path=/order/**
 
 logging:
   level:
