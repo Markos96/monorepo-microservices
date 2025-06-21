@@ -40,6 +40,12 @@ public class ProductController {
         return this.productService.saveProduct(newProduct);
     }
 
+
+    @QueryMapping
+    public List<ProductDTO> getProductsByIds(@Argument List<Integer> ids) {
+        return this.productService.getProductsByIds(ids);
+    }
+
     @MutationMapping
     public Boolean deleteProduct(@Argument Integer id) {
         return this.productService.deleteProductById(id);

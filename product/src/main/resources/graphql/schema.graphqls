@@ -24,6 +24,7 @@ type ProductDTO {
 type Query {
     getProducts : [ProductDTO]
     getProductById(id: Int!): ProductDTO
+    getProductsByIds (ids: [Int]!): [ProductDTO]!
 }
 
 type Mutation {

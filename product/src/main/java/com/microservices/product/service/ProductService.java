@@ -51,4 +51,12 @@ public class ProductService {
             return false;
         }
     }
+
+    public List<ProductDTO> getProductsByIds(List<Integer> ids) {
+        return productRepository.findAllById(ids)
+                .stream()
+                .map(
+                        product -> productMapper.toDTO(product)
+                ).toList();
+    }
 }
