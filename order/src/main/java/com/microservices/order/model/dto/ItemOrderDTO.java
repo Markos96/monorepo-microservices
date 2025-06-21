@@ -5,6 +5,7 @@ import com.microservices.order.model.domain.Order;
 
 public class ItemOrderDTO {
 
+    @JsonIgnore
     private Integer id;
 
     private Integer productId;

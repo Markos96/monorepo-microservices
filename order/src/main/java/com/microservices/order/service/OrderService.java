@@ -1,5 +1,7 @@
 package com.microservices.order.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservices.order.client.FeignClientRequest;
 import com.microservices.order.client.WebClientProduct;
 import com.microservices.order.mapper.ItemOrderMapper;
@@ -11,17 +13,22 @@ import com.microservices.order.model.dto.ItemOrderDTO;
 import com.microservices.order.model.dto.OrderDTO;
 import com.microservices.order.model.dto.ProductDTO;
 import com.microservices.order.repository.OrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     private OrderRepository orderRepository;
 
@@ -46,36 +53,56 @@ public class OrderService {
             throw new RuntimeException(String.format("Client with code %d not found",  orderDTO.getCustomerId()));
         }
 
-        List<ProductDTO> productList = webClientProduct.getProducts();
+        List<ProductDTO> productList = webClientProduct.getProductsByIds(orderDTO.getOrderItem().stream().map(ItemOrderDTO::getProductId).toList());
 
-        double total = orderDTO.getOrderItem().stream()
-                .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
-                .sum();
+        verifyExistProducts(orderDTO, productList);
 
         orderDTO.setOrderDate(LocalDateTime.now());
-        orderDTO.setTotal(total);
+        orderDTO.setTotal(getTotal(orderDTO));
         orderDTO.setQuantity(orderDTO.getOrderItem().size());
 
         Order orderSaved = this.orderMapper.toEntity(orderDTO);
 
-        Order finalOrderSaved = orderSaved;
-        Order finalOrderSaved1 = orderSaved;
-        List<OrderItem> itemOrderList = productList.stream()
-                .map(productDTO -> {
-                    OrderItem item = new OrderItem();
-                    item.setProductId(productDTO.getId());
-                    item.setQuantity(1); // Desarrolladr logicar para cantidad
-                    item.setUnitPrice(BigDecimal.valueOf(productDTO.getPrice()));
-                    item.setOrder(finalOrderSaved1);
-                    return item;
-                })
-                .toList();
+        List<OrderItem> itemOrderList = mapProductsToOrderItems(orderSaved, productList);
 
         orderSaved.setOrderItem(itemOrderList);
 
         orderSaved = this.orderRepository.save(orderSaved);
 
         return this.orderMapper.toDTO(orderSaved);
+    }
+
+    private static void verifyExistProducts(OrderDTO orderDTO, List<ProductDTO> productList) {
+        Set<Integer> productIds = productList.stream()
+                .map(ProductDTO::getId)
+                .collect(Collectors.toSet());
+
+        List<Integer> itemsNotFound = orderDTO.getOrderItem().stream()
+                .filter(item -> !productIds.contains(item.getProductId()))
+                .map(ItemOrderDTO::getProductId)
+                .toList();
+
+        itemsNotFound.forEach( i -> log.warn("Product with id: {} is not found", i));
+    }
+
+    private static double getTotal(OrderDTO orderDTO) {
+        return orderDTO.getOrderItem().stream()
+                .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
+                .sum();
+    }
+
+
+    private List<OrderItem> mapProductsToOrderItems(Order order, List<ProductDTO> products) {
+        return products.stream()
+                .map(productDTO -> {
+                    OrderItem item = new OrderItem();
+                    item.setProductId(productDTO.getId());
+                    item.setQuantity(1);
+                    item.setUnitPrice(BigDecimal.valueOf(productDTO.getPrice()));
+                    item.setOrder(order);
+                    return item;
+                })
+                .toList();
     }
 
     public OrderDTO getOrderById(Long id) {
@@ -88,20 +115,15 @@ public class OrderService {
         return orderDTO;
     }
 
-    @Autowired
-    public void setWebClientProduct(WebClientProduct webClientProduct) {
-        this.webClientProduct = webClientProduct;
-    }
 
     @Autowired
-    public void setFeignClientRequest(FeignClientRequest feignClientRequest) {
-        this.feignClientRequest = feignClientRequest;
-    }
+    public void setWebClientProduct(WebClientProduct webClientProduct) { this.webClientProduct = webClientProduct; }
 
     @Autowired
-    public void setItemOrderMapper(ItemOrderMapper itemOrderMapper) {
-        this.itemOrderMapper = itemOrderMapper;
-    }
+    public void setFeignClientRequest(FeignClientRequest feignClientRequest) { this.feignClientRequest = feignClientRequest; }
+
+    @Autowired
+    public void setItemOrderMapper(ItemOrderMapper itemOrderMapper) { this.itemOrderMapper = itemOrderMapper; }
 
     @Autowired
     public void setOrderRepository(OrderRepository orderRepository) {this.orderRepository = orderRepository;}

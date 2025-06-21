@@ -16,13 +16,8 @@ public class GraphQLResponseDTO {
         this.data = data;
     }
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    public <T> T extract(String key, Class<T> valueType) {
-        return objectMapper.convertValue(data.get(key), valueType);
-    }
-
     public <T> List<T> extractList(String key, Class<T> valueType) {
+        ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(
                 data.get(key),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, valueType)

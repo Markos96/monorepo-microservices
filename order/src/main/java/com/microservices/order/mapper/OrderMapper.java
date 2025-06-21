@@ -2,7 +2,6 @@ package com.microservices.order.mapper;
 
 import com.microservices.order.model.domain.Order;
 import com.microservices.order.model.dto.OrderDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +32,7 @@ public class OrderMapper {
         orderDTO.setCustomerId(order.getCustomerId());
         orderDTO.setPaymentMethod(order.getPaymentMethod());
         orderDTO.setTotal(order.getTotal());
+        orderDTO.setQuantity(order.getQuantity());
         orderDTO.setOrderItem(itemOrderMapper.toDTOS(order.getOrderItem()));
 
         return orderDTO;

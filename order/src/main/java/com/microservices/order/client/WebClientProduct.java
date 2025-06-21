@@ -8,7 +8,9 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class WebClientProduct {
@@ -22,10 +24,13 @@ public class WebClientProduct {
                 .build();
     }
 
-    public List<ProductDTO> getProducts() {
-        String query = "{ getProducts { id name description price } }";
+    public List<ProductDTO> getProductsByIds(List<Integer> ids) {
+        String query = "query($ids: [Int!]!) { getProductsByIds(ids: $ids) { id name description price } }";
 
-        GraphQLRequestDTO request = new GraphQLRequestDTO(query);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("ids", ids);
+
+        GraphQLRequestDTO request = new GraphQLRequestDTO(query, variables);
 
         GraphQLResponseDTO response = webClient.post()
                 .bodyValue(request)
@@ -33,7 +38,7 @@ public class WebClientProduct {
                 .bodyToMono(GraphQLResponseDTO.class)
                 .block();
 
-        return response.extractList("getProducts", ProductDTO.class);
+        return response.extractList("getProductsByIds", ProductDTO.class);
     }
 
 }
